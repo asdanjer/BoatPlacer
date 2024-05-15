@@ -1,13 +1,14 @@
 package org.asdanjer.boatplacer;
 
 import me.ryanhamshire.GriefPrevention.ClaimPermission;
+import me.ryanhamshire.GriefPrevention.events.ClaimPermissionCheckEvent;
 import org.bukkit.Location;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
@@ -20,47 +21,52 @@ import java.sql.SQLOutput;
 
 
 public final class BoatPlacer extends JavaPlugin implements Listener {
-    public static String BOATTAG="[.boat]";
+    public static String BOATTAG = "[.boat]";
     GriefPrevention api;
+
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
-        api=GriefPrevention.instance;
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
     }
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerInteract(PlayerInteractEvent event) {
+
+    @EventHandler
+    public void onClaimPermissionCheck(ClaimPermissionCheckEvent event) {
+        Claim cl = event.getClaim();
+        Event causalEvent = event.getTriggeringEvent();
+        boolean allowable = false;
+        if (causalEvent == null) return;
+        if (causalEvent instanceof PlayerInteractEvent) {
+            allowable = handlePlayerInteractEvent((PlayerInteractEvent) causalEvent, cl);
+        } else if (causalEvent instanceof VehicleDamageEvent) {
+            allowable = handleVehicleDamageEvent((VehicleDamageEvent) causalEvent, cl);
+        }
+        if (allowable) {
+            event.setCancelled(false);
+        }
+    }
+
+    private boolean handlePlayerInteractEvent(PlayerInteractEvent event, Claim cl) {
+        if (cl == null) return false;
         Player player = event.getPlayer();
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
-        Block block= event.getClickedBlock();
-        if(block==null) return;
-        Claim cl= api.dataStore.getClaimAt(block.getLocation(), true, null);
-        if(cl==null) return;
-        if(Tag.ITEMS_BOATS.isTagged(itemInHand.getType())) {
-            if(ClaimPermission.Build.equals(cl.getPermission(BOATTAG))){
-                event.setCancelled(false);
-            }
+        if (Tag.ITEMS_BOATS.isTagged(itemInHand.getType())) {
+            return ClaimPermission.Build.equals(cl.getPermission(BOATTAG));
         }
 
+        return false;
     }
-    @EventHandler
-    public void onVehicleDamage(VehicleDamageEvent event){
+    public boolean handleVehicleDamageEvent(VehicleDamageEvent event, Claim cl) {
+        if(cl==null) return false;
         if(event.getAttacker() instanceof Player){
             if(event.getVehicle() instanceof Boat){
-                Boat boat = (Boat) event.getVehicle();
-                Location loc = boat.getLocation();
-                Claim cl= api.dataStore.getClaimAt(loc, true, null);
-                if(cl==null) return;
-                if(ClaimPermission.Build.equals(cl.getPermission(BOATTAG))){
-                    event.setCancelled(false);
-                }
-
-
+                return ClaimPermission.Build.equals(cl.getPermission(BOATTAG));
             }
-        }
+    }
+        return false;
     }
 }
