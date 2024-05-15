@@ -6,7 +6,7 @@
 
   <groupId>org.asdanjer</groupId>
   <artifactId>BoatPlacer</artifactId>
-  <version>2</version>
+  <version>3</version>
   <packaging>jar</packaging>
 
   <name>BoatPlacer</name>
