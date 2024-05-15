@@ -1,1 +1,1 @@
-issue: Griveprevention still Displays Error Mesages. This can not be fixed at the current moment. 
+Use `/trust .boat` to allow boats to be placed by anyone in the current claim. Use `/untrust .boat` to revoke this permission. Outside a claim, it applies to all current claims.
