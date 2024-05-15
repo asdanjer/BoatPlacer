@@ -1,0 +1,6 @@
+name: BoatPlacer
+version: '${project.version}'
+main: org.asdanjer.boatplacer.BoatPlacer
+api-version: '1.20'
+author: asdanjer
+depend: [GriefPrevention]
