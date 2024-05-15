@@ -42,7 +42,7 @@ public final class BoatPlacer extends JavaPlugin implements Listener {
         if (causalEvent == null) return;
         if (causalEvent instanceof PlayerInteractEvent) allowable = handlePlayerInteractEvent((PlayerInteractEvent) causalEvent, cl);
         else if (causalEvent instanceof VehicleDamageEvent) allowable = handleVehicleDamageEvent((VehicleDamageEvent) causalEvent, cl);
-        if (allowable) event.setCancelled(false);
+        if (allowable) event.setDenialReason(null);
 
     }
 
