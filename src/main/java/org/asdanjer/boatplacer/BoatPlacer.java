@@ -40,32 +40,25 @@ public final class BoatPlacer extends JavaPlugin implements Listener {
         Event causalEvent = event.getTriggeringEvent();
         boolean allowable = false;
         if (causalEvent == null) return;
-        if (causalEvent instanceof PlayerInteractEvent) {
-            allowable = handlePlayerInteractEvent((PlayerInteractEvent) causalEvent, cl);
-        } else if (causalEvent instanceof VehicleDamageEvent) {
-            allowable = handleVehicleDamageEvent((VehicleDamageEvent) causalEvent, cl);
-        }
-        if (allowable) {
-            event.setCancelled(false);
-        }
+        if (causalEvent instanceof PlayerInteractEvent) allowable = handlePlayerInteractEvent((PlayerInteractEvent) causalEvent, cl);
+        else if (causalEvent instanceof VehicleDamageEvent) allowable = handleVehicleDamageEvent((VehicleDamageEvent) causalEvent, cl);
+        if (allowable) event.setCancelled(false);
+
     }
 
     private boolean handlePlayerInteractEvent(PlayerInteractEvent event, Claim cl) {
         if (cl == null) return false;
         Player player = event.getPlayer();
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
-        if (Tag.ITEMS_BOATS.isTagged(itemInHand.getType())) {
-            return ClaimPermission.Build.equals(cl.getPermission(BOATTAG));
-        }
+        if (Tag.ITEMS_BOATS.isTagged(itemInHand.getType())) return ClaimPermission.Build.equals(cl.getPermission(BOATTAG));
 
         return false;
     }
     public boolean handleVehicleDamageEvent(VehicleDamageEvent event, Claim cl) {
         if(cl==null) return false;
         if(event.getAttacker() instanceof Player){
-            if(event.getVehicle() instanceof Boat){
-                return ClaimPermission.Build.equals(cl.getPermission(BOATTAG));
-            }
+            if(event.getVehicle() instanceof Boat) return ClaimPermission.Build.equals(cl.getPermission(BOATTAG));
+
     }
         return false;
     }
