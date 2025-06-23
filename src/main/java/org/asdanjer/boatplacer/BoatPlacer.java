@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.inventory.ItemStack;
@@ -49,6 +50,7 @@ public final class BoatPlacer extends JavaPlugin implements Listener {
     private boolean handlePlayerInteractEvent(PlayerInteractEvent event, Claim cl) {
         if (cl == null) return false;
         Player player = event.getPlayer();
+        if(!event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getClickedBlock().getType().isInteractable()) return false;
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
         if (Tag.ITEMS_BOATS.isTagged(itemInHand.getType())) return ClaimPermission.Build.equals(cl.getPermission(BOATTAG));
 
