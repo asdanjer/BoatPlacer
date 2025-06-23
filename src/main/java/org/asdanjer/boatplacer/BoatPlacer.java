@@ -49,9 +49,9 @@ public final class BoatPlacer extends JavaPlugin implements Listener {
 
     private boolean handlePlayerInteractEvent(PlayerInteractEvent event, Claim cl) {
         if (cl == null) return false;
-        Player player = event.getPlayer();
+        if (event.getClickedBlock() == null) return false;
         if(!event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getClickedBlock().getType().isInteractable()) return false;
-        ItemStack itemInHand = player.getInventory().getItemInMainHand();
+        ItemStack itemInHand = event.getPlayer().getInventory().getItemInMainHand();
         if (Tag.ITEMS_BOATS.isTagged(itemInHand.getType())) return ClaimPermission.Build.equals(cl.getPermission(BOATTAG));
 
         return false;
